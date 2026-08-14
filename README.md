@@ -6,15 +6,11 @@ FactorySimulator 是一个轻量 RPG 工厂经营插件。玩家可以创建自�
 > 作者：`XueBaiXD`  
 > QQ：3987575641 / 2932226971  
 
-
 > 本插件已经开源
-
 
 https://github.com/XueBaiXD/FactorySimulator
 
-
 https://modrinth.com/plugin/factorysimulator
-
 
 ## 目录
 
