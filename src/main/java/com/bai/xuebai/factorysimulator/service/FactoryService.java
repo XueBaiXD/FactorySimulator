@@ -81,6 +81,7 @@ public class FactoryService {
         int nextSize = Math.min(config.getMaxPlotSize(), profile.getPlotSize() + config.getPlotGrowthPerLevel());
         profile.setMoney(profile.getMoney() - cost);
         profile.setPlotSize(nextSize);
+        profile.setLevel(profile.getLevel() + 1);
         save(profile);
         worldService.ensureWorld(profile);
         return true;

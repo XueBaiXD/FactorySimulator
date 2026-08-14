@@ -20,7 +20,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import com.bai.xuebai.factorysimulator.hook.FactoryPlaceholderExpansion;
+import com.bai.xuebai.factorysimulator.hook.FactoryPlaceholderHook;
 
 public final class FactorySimulator extends JavaPlugin {
 
@@ -33,6 +33,7 @@ public final class FactorySimulator extends JavaPlugin {
     private WorldService worldService;
     private LibraryManager libraryManager;
     private MachineRegistry machineRegistry;
+    private boolean initialized;
 
     @Override
     public void onEnable() {
@@ -50,26 +51,28 @@ public final class FactorySimulator extends JavaPlugin {
         this.libraryManager.bootstrap();
 
         this.storage = StorageFactory.create(this, pluginConfig);
-        this.storage.load();
-
-        this.worldService = new WorldService(this, pluginConfig, storage);
-        this.factoryService = new FactoryService(this, pluginConfig, pluginMessages, storage, worldService);
-        this.machineRegistry = new MachineRegistry(pluginConfig);
-        if (pluginConfig.isPlaceholderApiEnabled()) {
-            FactoryPlaceholderExpansion expansion = new FactoryPlaceholderExpansion(this);
-            if (expansion.register()) getLogger().info("PlaceholderAPI 变量已注册：%factorysimulator_<变量名>%");
-            else getLogger().warning("PlaceholderAPI 变量注册失败，请确认 PlaceholderAPI 已正确安装。");
-        }
-
-        registerCommands();
-        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(factoryService), this);
-        Bukkit.getPluginManager().registerEvents(new FactoryBlockListener(factoryService, machineRegistry), this);
-        Bukkit.getPluginManager().registerEvents(new FactoryMenuListener(this, factoryService, machineRegistry), this);
-        Bukkit.getPluginManager().registerEvents(new FactoryWorldListener(factoryService), this);
-        Bukkit.getScheduler().runTaskTimer(this, new FactoryTicker(this, pluginConfig, factoryService), pluginConfig.getMachineTickInterval(), pluginConfig.getMachineTickInterval());
-
-        factoryService.bootstrapOnlinePlayers();
-        getLogger().info("FactorySimulator 已启动，存储类型: " + pluginConfig.getStorageType().name());
+        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    storage.load();
+                    Bukkit.getScheduler().runTask(FactorySimulator.this, new Runnable() {
+                        @Override
+                        public void run() {
+                            finishEnable();
+                        }
+                    });
+                } catch (RuntimeException exception) {
+                    Bukkit.getScheduler().runTask(FactorySimulator.this, new Runnable() {
+                        @Override
+                        public void run() {
+                            getLogger().severe("FactorySimulator 存储初始化失败: " + exception.getMessage());
+                            getServer().getPluginManager().disablePlugin(FactorySimulator.this);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -78,10 +81,37 @@ public final class FactorySimulator extends JavaPlugin {
             factoryService.shutdown();
         }
         if (storage != null) {
-            storage.saveAll();
+            if (initialized) {
+                storage.saveAll();
+            }
             storage.close();
         }
         instance = null;
+    }
+
+    private void finishEnable() {
+        if (!isEnabled()) {
+            return;
+        }
+        this.worldService = new WorldService(this, pluginConfig, storage);
+        this.factoryService = new FactoryService(this, pluginConfig, pluginMessages, storage, worldService);
+        this.machineRegistry = new MachineRegistry(pluginConfig);
+        if (pluginConfig.isPlaceholderApiEnabled()) {
+            if (FactoryPlaceholderHook.register(this)) {
+                getLogger().info("PlaceholderAPI 变量已注册：%factorysimulator_<变量名>%");
+            } else {
+                getLogger().warning("PlaceholderAPI 未安装或变量注册失败。");
+            }
+        }
+        registerCommands();
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(factoryService), this);
+        Bukkit.getPluginManager().registerEvents(new FactoryBlockListener(factoryService, machineRegistry), this);
+        Bukkit.getPluginManager().registerEvents(new FactoryMenuListener(this, factoryService, machineRegistry), this);
+        Bukkit.getPluginManager().registerEvents(new FactoryWorldListener(factoryService), this);
+        Bukkit.getScheduler().runTaskTimer(this, new FactoryTicker(this, pluginConfig, factoryService), pluginConfig.getMachineTickInterval(), pluginConfig.getMachineTickInterval());
+        factoryService.bootstrapOnlinePlayers();
+        initialized = true;
+        getLogger().info("FactorySimulator 已启动，存储类型: " + pluginConfig.getStorageType().name());
     }
 
     private void registerCommands() {

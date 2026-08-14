@@ -96,15 +96,18 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
         }
         if (args[0].equalsIgnoreCase("buy") && args.length >= 2 && sender instanceof Player) {
             Player player = (Player) sender; String id = args[1].toLowerCase();
+            int amount = args.length >= 3 ? parsePurchaseAmount(args[2]) : 1;
+            if (amount < 1) { sender.sendMessage(ChatColor.RED + "购买数量必须是 1 到 2304 之间的整数。"); return true; }
             if (registry.get(id) == null) { sender.sendMessage(ChatColor.RED + "不存在的设备 ID。"); return true; }
             FactoryProfile profile = service.getOrCreate(player);
             if (!profile.isCreated()) { sender.sendMessage(ChatColor.RED + "请先创建工厂。"); return true; }
             if (profile.getLevel() < pluginConfig().getMachineUnlockLevel(id)) { sender.sendMessage(ChatColor.RED + "你的工厂等级不足，无法解锁该设备。"); return true; }
             double price = pluginConfig().getMachinePrice(id);
-            if (profile.getMoney() < price) { sender.sendMessage(ChatColor.RED + "资金不足，需要 " + price + "。"); return true; }
-            profile.setMoney(profile.getMoney() - price); service.save(profile);
-            player.getInventory().addItem(registry.createItem(id, 1));
-            sender.sendMessage(ChatColor.GREEN + "购买成功：" + id);
+            double totalPrice = price * amount;
+            if (profile.getMoney() < totalPrice) { sender.sendMessage(ChatColor.RED + "资金不足，需要 " + totalPrice + "。"); return true; }
+            profile.setMoney(profile.getMoney() - totalPrice); service.save(profile);
+            player.getInventory().addItem(registry.createItem(id, amount));
+            sender.sendMessage(ChatColor.GREEN + "购买成功：" + id + " x" + amount + "，花费：" + totalPrice);
             return true;
         }
         if (args[0].equalsIgnoreCase("info")) {
@@ -135,16 +138,26 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         if (args[0].equalsIgnoreCase("machine") && args.length >= 2 && args[1].equalsIgnoreCase("give")) {
-            if (!(sender instanceof Player) && args.length < 4) {
-                sender.sendMessage(messages.get("only-player-needed"));
+            if (!sender.hasPermission("factorysimulator.admin")) {
+                sender.sendMessage(messages.get("no-permission"));
                 return true;
             }
-            Player target = sender instanceof Player ? (Player) sender : Bukkit.getPlayer(args[2]);
-            String type = sender instanceof Player ? args[2] : args[3];
-            int amountIndex = sender instanceof Player ? 3 : 4;
+            if (args.length < 3) {
+                sender.sendMessage(ChatColor.RED + "用法：/fs machine give <玩家> <设备ID> [数量]");
+                return true;
+            }
+            boolean legacySelfTarget = registry.get(args[2].toLowerCase()) != null;
+            boolean hasTarget = !legacySelfTarget && args.length >= 4;
+            if (!(sender instanceof Player) && !hasTarget) {
+                sender.sendMessage(ChatColor.RED + "用法：/fs machine give <玩家> <设备ID> [数量]");
+                return true;
+            }
+            Player target = hasTarget ? Bukkit.getPlayer(args[2]) : (Player) sender;
+            String type = hasTarget ? args[3].toLowerCase() : args[2].toLowerCase();
+            int amountIndex = hasTarget ? 4 : 3;
             int amount = args.length > amountIndex ? parseAmount(args[amountIndex]) : 1;
             if (target == null || registry.get(type) == null) {
-                sender.sendMessage(messages.format("machine-not-found", "type", type));
+                sender.sendMessage(target == null ? ChatColor.RED + "目标玩家不在线。" : messages.format("machine-not-found", "type", type));
                 return true;
             }
             target.getInventory().addItem(registry.createItem(type, amount));
@@ -171,7 +184,15 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
             return filter(Arrays.asList("help", "version", "create", "enter", "menu", "rename", "upgrade", "buy", "info", "status", "server", "machine", "reload"), args[0]);
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("machine")) return filter(Collections.singletonList("give"), args[1]);
-        if (args.length == 3 && args[0].equalsIgnoreCase("machine") && args[1].equalsIgnoreCase("give")) return filter(new ArrayList<String>(registry.all().keySet()), args[2]);
+        if (args.length == 3 && args[0].equalsIgnoreCase("machine") && args[1].equalsIgnoreCase("give")) {
+            List<String> options = new ArrayList<String>();
+            for (Player player : Bukkit.getOnlinePlayers()) options.add(player.getName());
+            options.addAll(registry.all().keySet());
+            return filter(options, args[2]);
+        }
+        if (args.length == 4 && args[0].equalsIgnoreCase("machine") && args[1].equalsIgnoreCase("give")) {
+            return filter(new ArrayList<String>(registry.all().keySet()), args[3]);
+        }
         if (args.length == 2 && args[0].equalsIgnoreCase("info")) {
             List<String> options = new ArrayList<String>();
             options.add("server");
@@ -194,8 +215,17 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
     }
 
     private int parseAmount(String value) {
-        try { return Math.max(1, Math.min(64, Integer.parseInt(value))); }
+        try { return Math.max(1, Math.min(2304, Integer.parseInt(value))); }
         catch (NumberFormatException ignored) { return 1; }
+    }
+
+    private int parsePurchaseAmount(String value) {
+        try {
+            int amount = Integer.parseInt(value);
+            return amount >= 1 && amount <= 2304 ? amount : -1;
+        } catch (NumberFormatException ignored) {
+            return -1;
+        }
     }
 
     private com.bai.xuebai.factorysimulator.config.PluginConfig pluginConfig() {

@@ -16,14 +16,20 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FactoryMenuListener implements Listener {
     private final FactorySimulator plugin;
     private final FactoryService service;
     private final MachineRegistry registry;
+    private final Map<UUID, String> pendingPurchases = new ConcurrentHashMap<UUID, String>();
     public FactoryMenuListener(FactorySimulator plugin, FactoryService service, MachineRegistry registry) { this.plugin = plugin; this.service = service; this.registry = registry; }
 
     @EventHandler public void onBook(PlayerInteractEvent event) {
@@ -57,6 +63,34 @@ public class FactoryMenuListener implements Listener {
         else if ("机器搭配指南".equals(name)) recipes(player);
         else if ("出售".equals(name)) recycle(player);
         else if (name.startsWith("购买 ")) buy(player, item);
+    }
+
+    @EventHandler public void onPurchaseAmount(AsyncPlayerChatEvent event) {
+        final String machineId = pendingPurchases.remove(event.getPlayer().getUniqueId());
+        if (machineId == null) return;
+        event.setCancelled(true);
+        final String input = event.getMessage().trim();
+        final Player player = event.getPlayer();
+        if (input.equalsIgnoreCase("cancel")) {
+            player.sendMessage("§a已取消购买。");
+            return;
+        }
+        final int amount;
+        try {
+            amount = Integer.parseInt(input);
+        } catch (NumberFormatException ignored) {
+            player.sendMessage("§c请输入有效的正整数购买数量。");
+            return;
+        }
+        if (amount < 1 || amount > 2304) {
+            player.sendMessage("§c购买数量必须在 1 到 2304 之间。");
+            return;
+        }
+        Bukkit.getScheduler().runTask(plugin, new Runnable() {
+            @Override public void run() {
+                player.performCommand("fs buy " + machineId + " " + amount);
+            }
+        });
     }
     @EventHandler public void onDrag(InventoryDragEvent event) {
         if (!isFactoryMenu(event.getView().getTitle())) return;
@@ -126,8 +160,10 @@ public class FactoryMenuListener implements Listener {
         for (String line : item.getItemMeta().getLore()) {
             String plain = ChatColor.stripColor(line);
             if (plain != null && plain.startsWith("FS_SHOP:")) {
+                String machineId = plain.substring("FS_SHOP:".length());
+                pendingPurchases.put(player.getUniqueId(), machineId);
                 player.closeInventory();
-                player.performCommand("fs buy " + plain.substring("FS_SHOP:".length()));
+                player.sendMessage("§e请输入要购买的数量 §7(1-2304)，输入 §fcancel §7取消：");
                 return;
             }
         }

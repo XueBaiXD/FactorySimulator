@@ -32,6 +32,15 @@ public class YamlFactoryStorage implements FactoryStorage {
         if (!folder.exists()) {
             folder.mkdirs();
         }
+        File[] files = folder.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".yml")) {
+                load(file);
+            }
+        }
     }
 
     @Override

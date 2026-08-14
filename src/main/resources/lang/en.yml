@@ -9,14 +9,14 @@ help:
     - '&e/{label} menu &7- Show tutorial hint'
     - '&e/{label} rename <name> &7- Rename your factory'
     - '&e/{label} upgrade &7- Upgrade factory plot'
-    - '&e/{label} buy <machine-id> &7- Buy a machine'
+    - '&e/{label} buy <machine-id> [amount] &7- Buy machines'
     - '&e/{label} info [player] &7- View factory information'
     - '&e/{label} status &7- View server status'
-    - '&e/{label} machine give <machine-id> [amount] &7- Give a machine (admin)'
+    - '&e/{label} machine give <player> <machine-id> [amount] &7- Give a machine (admin)'
     - '&e/{label} reload &7- Reload configuration (admin)'
 version-info: |-
   &6FactorySimulator &7- &fFactory Simulator
-  &7Version: &f1.0.0
+  &7Version: &f1.0.1
   &7Author: &fXueBaiXD
   &7GitHub: &fXueBaiXD
   &7QQ: &f3987575641 &7/ &f2932226971
@@ -28,3 +28,4 @@ info-server: '{prefix} &aServer Status &7| &fFactories: {players} &7| &fOnline: 
 info-player: '{prefix} &aFactory Info &7| &fName: {name} &7| &fID: {id} &7| &fLevel: {level} &7| &fPlot: {plotSize} &7| &fMoney: {money} &7| &fWorkers: {workers} &7| &fMachines: {machines} &7| &fOfflineHours: {offlineHours} &7| &fAchievements: {achievements}'
 machine-not-found: '{prefix} &cUnknown machine type: &f{type}'
 machine-given: '{prefix} &aGiven machine &f{type} &ax{amount}'
+purchase-amount: '{prefix} &eEnter the purchase amount &7(1-2304), or type cancel to cancel.'

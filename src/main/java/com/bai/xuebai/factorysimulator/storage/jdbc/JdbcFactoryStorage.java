@@ -43,8 +43,19 @@ public class JdbcFactoryStorage implements FactoryStorage {
                 connection = DriverManager.getConnection(url, config.getMysqlUser(), config.getMysqlPassword());
             }
             createTables();
+            loadProfiles();
         } catch (SQLException ex) {
             throw new IllegalStateException("无法初始化数据库存储", ex);
+        }
+    }
+
+    private void loadProfiles() throws SQLException {
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM factory_profiles")) {
+            while (resultSet.next()) {
+                FactoryProfile profile = fromResultSet(resultSet);
+                cache.put(profile.getPlayerId(), profile);
+            }
         }
     }
 
