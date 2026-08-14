@@ -2,19 +2,14 @@
 
 FactorySimulator 是一个轻量 RPG 工厂经营插件。玩家可以创建自己的工厂世界，摆放并连接生产设备，出售产物赚取资金，升级工厂地皮与设备，逐步建设自动化生产线。
 
-> 当前版本：`1.0.0`  
+> 当前版本：`1.0.1`
 > 作者：`XueBaiXD`  
 > QQ：3987575641 / 2932226971  
 
-
 > 本插件已经开源
 
-
 https://github.com/XueBaiXD/FactorySimulator
-
-
 https://modrinth.com/plugin/factorysimulator
-
 
 ## 目录
 
@@ -41,6 +36,8 @@ https://modrinth.com/plugin/factorysimulator
 - **成就数据**：工厂资料保存成就集合，并可在消息与 PlaceholderAPI 中使用统计信息。
 - **排行榜接口**：支持按资金和工厂等级计算玩家名次，便于接入全息、记分板或其他展示插件。
 - **多种存储**：支持 YAML、SQLite 和 MySQL 三种存储方式。
+- **批量商店购买**：点击设备商店中的设备后，可在聊天框输入购买数量，一次购买多个设备。
+- **管理员发放**：管理员可以指定在线玩家和发放数量，批量发放设备。
 - **软依赖设计**：PlaceholderAPI、Vault、HolographicDisplays、Multiverse-Core 均为软依赖，不安装时插件仍可启动核心功能。
 - **中文/繁中/英文语言**：通过 `messages.yml` 选择 `zh_cn`、`zh_tw` 或 `en` 语言文件。
 
@@ -86,7 +83,7 @@ https://modrinth.com/plugin/factorysimulator
 3. 摆放基础采矿机、传送带和自动售货机。
 4. 将采矿机接入传送带，并将传送带末端连接到自动售货机。
 5. 等待生产并出售产物，使用 `/fs info` 查看资金、等级和设备数量。
-6. 使用 `/fs buy <设备ID>` 购买更高级设备。
+6. 使用 `/fs buy <设备ID> [数量]` 购买更高级设备；也可以从教程书打开设备商店，点击设备后在聊天框输入购买数量。
 7. 使用 `/fs upgrade` 扩大地皮，继续扩建生产区域。
 
 ## 命令与权限
@@ -105,7 +102,7 @@ https://modrinth.com/plugin/factorysimulator
 | `/fs menu` | 查看教程菜单提示；教程内容通过教程书打开 |
 | `/fs rename <工厂名称>` | 修改自己的工厂名称 |
 | `/fs upgrade` | 升级工厂地皮 |
-| `/fs buy <设备ID>` | 购买一件指定设备并放入背包 |
+| `/fs buy <设备ID> [数量]` | 购买指定数量的设备并放入背包；数量范围为 `1-2304` |
 | `/fs info` | 查看自己的工厂信息 |
 | `/fs info <玩家名或UUID>` | 查看指定玩家的工厂信息 |
 | `/fs info server` | 查看服务器状态 |
@@ -117,10 +114,21 @@ https://modrinth.com/plugin/factorysimulator
 | 命令 | 说明 | 权限 |
 | --- | --- | --- |
 | `/fs reload` | 重新加载插件配置与语言 | `factorysimulator.admin` |
-| `/fs machine give <设备ID> [数量]` | 给自己发放设备 | 通常建议仅管理员使用 |
-| `/fs machine give <玩家> <设备ID> [数量]` | 给指定在线玩家发放设备 | 通常建议仅管理员使用 |
+| `/fs machine give <设备ID> [数量]` | 给自己发放设备（兼容旧格式） | `factorysimulator.admin` |
+| `/fs machine give <玩家> <设备ID> [数量]` | 给指定在线玩家发放指定数量的设备 | `factorysimulator.admin` |
 
-`factorysimulator.admin` 默认仅授予 OP。插件当前只在 `/fs reload` 中显式检查该权限；服务器管理员应通过权限插件或 OP 管理其他测试命令的使用权限。
+`factorysimulator.admin` 默认仅授予 OP。`reload` 和 `machine give` 会显式检查该权限；发放数量范围为 `1-2304`。指定玩家必须在线。
+
+### 商店批量购买
+
+在教程书打开主菜单后，进入“设备商店”并点击要购买的设备。商店会关闭并提示你在聊天框输入数量：
+
+```text
+1-2304       购买对应数量
+cancel        取消本次购买
+```
+
+购买会按照设备单价乘以数量一次性结算；也可以直接使用 `/fs buy <设备ID> [数量]`。
 
 ## 生产线与设备
 
@@ -454,7 +462,11 @@ plugins/
 
 ### 设备买不到
 
-检查设备 ID 拼写、工厂等级和资金。设备价格及解锁等级位于 `factory.yml` 的 `shop.items` 节点。
+检查设备 ID 拼写、工厂等级和资金；批量购买时还要确认总价是否超出工厂资金。设备价格及解锁等级位于 `factory.yml` 的 `shop.items` 节点。
+
+### 商店点击后如何购买多个设备
+
+点击设备后，在聊天框输入 `1-2304` 之间的整数即可批量购买；输入 `cancel` 可取消。如果输入无效，本次输入会被取消，需要重新点击设备发起购买。
 
 ### 设备被破坏后无法识别
 
