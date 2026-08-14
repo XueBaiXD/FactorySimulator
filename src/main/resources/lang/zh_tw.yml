@@ -1,0 +1,28 @@
+prefix: '&6[FactorySimulator]&r'
+help:
+  header: '{prefix} &6工廠模擬器 &7- &f指令幫助'
+  lines:
+    - '&e/{label} version &7- 查看插件版本與作者資訊'
+    - '&e/{label} help &7- 查看此幫助'
+    - '&e/{label} create &7- 建立自己的工廠'
+    - '&e/{label} enter &7- 進入自己的工廠世界'
+    - '&e/{label} menu &7- 查看教學提示'
+    - '&e/{label} rename <名稱> &7- 修改工廠名稱'
+    - '&e/{label} upgrade &7- 升級工廠地皮'
+    - '&e/{label} buy <設備ID> &7- 購買設備'
+    - '&e/{label} info [玩家] &7- 查看工廠資訊'
+    - '&e/{label} status &7- 查看伺服器狀態'
+    - '&e/{label} machine give <設備ID> [數量] &7- 發放設備（管理員）'
+    - '&e/{label} reload &7- 重載設定（管理員）'
+version-info: |-
+  &6FactorySimulator &7- &f工廠模擬器
+  &7Version: &f1.0.0
+  &7Author: &fXueBaiXD
+  &7GitHub: &fXueBaiXD
+  &7QQ: &f3987575641 &7/ &f2932226971
+only-player-needed: '{prefix} &c此指令僅玩家可用。'
+not-found: '{prefix} &c找不到目標工廠：&f{target}'
+info-server: '{prefix} &a伺服器狀態 &7| &f工廠總數: {players} &7| &f線上人數: {online} &7| &f儲存: {storage} &7| &fPAPI: {placeholderapi} &7| &fVault: {vault} &7| &f全息: {hologram}'
+info-player: '{prefix} &a工廠資訊 &7| &f名稱: {name} &7| &fID: {id} &7| &f等級: {level} &7| &f地皮: {plotSize} &7| &f金錢: {money} &7| &f工人: {workers} &7| &f設備: {machines} &7| &f離線小時: {offlineHours} &7| &f成就: {achievements}'
+machine-not-found: '{prefix} &c未知設備類型：&f{type}'
+machine-given: '{prefix} &a已發放設備 &f{type} &ax{amount}'

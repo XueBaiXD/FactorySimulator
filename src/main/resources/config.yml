@@ -1,0 +1,9 @@
+libraries:
+  download-fallback: false
+# FactorySimulator 主配置
+# 这里放一些全局行为配置，不把所有逻辑都堆在一个文件里。
+general:
+  # 是否打印更详细的启动与运行日志
+  debug: false
+  # 是否在启动时预热语言、配置等资源
+  preload-resources: true

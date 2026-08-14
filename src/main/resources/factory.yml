@@ -1,0 +1,106 @@
+starter:
+  initial-machine-amount: 1
+  initial-conveyor-amount: 4
+  initial-package-amount: 1
+  pickaxe-cooldown: 1
+
+leveling:
+  money-per-level: 5000
+
+shop:
+  items:
+    basic_miner:
+      price: 100
+      unlock-level: 1
+    coal_miner:
+      price: 300
+      unlock-level: 2
+    iron_miner:
+      price: 800
+      unlock-level: 4
+    gold_miner:
+      price: 1600
+      unlock-level: 6
+    redstone_miner:
+      price: 2200
+      unlock-level: 7
+    diamond_miner:
+      price: 5000
+      unlock-level: 10
+    conveyor:
+      price: 50
+      unlock-level: 1
+    smelter:
+      price: 500
+      unlock-level: 2
+    assembler:
+      price: 1200
+      unlock-level: 5
+    electric_furnace:
+      price: 1800
+      unlock-level: 6
+    fuel_generator:
+      price: 1500
+      unlock-level: 6
+    storage:
+      price: 350
+      unlock-level: 2
+    seller:
+      price: 250
+      unlock-level: 2
+# 工厂成长与经济配置
+# 这些数值可以自由调，方便你后续做平衡。
+plot:
+  # 玩家初始工厂地皮大小
+  initial-size: 32
+  # 每次升级增加的地皮边长
+  growth-per-level: 8
+  # 地皮最大边长，防止无限膨胀
+  max-size: 256
+  upgrade-base-cost: 2500
+
+economy:
+  # 初始资金
+  starting-money: 1000
+  # 离线收益结算粒度，单位分钟
+  offline-income-minute-step: 5
+  # 离线收益倍率，1.0 表示等于在线基础收益
+  offline-income-rate: 0.25
+
+workers:
+  # 新玩家初始工人数
+  starting-count: 0
+  # 工人数上限
+  max-count: 32
+  # 基础工人效率
+  base-efficiency: 1.0
+
+achievements:
+  # 是否启用成就系统
+  enabled: true
+  # 达到多少成就后广播提示
+  broadcast-threshold: 10
+
+production:
+  # Bukkit ticks between production scans (20 ticks = 1 second)
+  tick-interval: 20
+  # Processing time of the starter machine in ticks
+  basic-process-ticks: 100
+  # Money awarded when a completed basic product is sold by the output machine
+  basic-sell-price: 8.0
+  sell-prices:
+    iron_ore: 20.0
+    coal: 12.0
+    iron_ingot: 35.0
+    gold_ore: 45.0
+    gold_ingot: 75.0
+    redstone: 18.0
+    diamond: 180.0
+    factory_product: 120.0
+    advanced_component: 300.0
+
+machines:
+  # Whether breaking a registered machine returns its machine item
+  drop-on-break: true
+  # Hidden lore marker used by the 1.12.2-compatible item registry
+  item-marker: '§0FS_MACHINE:'

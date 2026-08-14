@@ -1,0 +1,30 @@
+prefix: '&6[FactorySimulator]&r'
+help:
+  header: '{prefix} &6工厂模拟器 &7- &f命令帮助'
+  lines:
+    - '&e/{label} help &7- 查看此帮助'
+    - '&e/{label} version &7- 查看插件版本与作者信息'
+    - '&e/{label} create &7- 创建自己的工厂'
+    - '&e/{label} enter &7- 进入自己的工厂世界'
+    - '&e/{label} menu &7- 查看教程提示'
+    - '&e/{label} rename <名称> &7- 修改工厂名称'
+    - '&e/{label} upgrade &7- 升级工厂地皮'
+    - '&e/{label} buy <设备ID> &7- 购买设备'
+    - '&e/{label} info [玩家] &7- 查看工厂信息'
+    - '&e/{label} status &7- 查看服务器状态'
+    - '&e/{label} machine give <设备ID> [数量] &7- 发放设备（管理员）'
+    - '&e/{label} reload &7- 重载配置（管理员）'
+version-info: |-
+  &6FactorySimulator &7- &f工厂模拟器
+  &7Version: &f1.0.0
+  &7Author: &fXueBaiXD
+  &7GitHub: &fXueBaiXD
+  &7QQ: &f3987575641 &7/ &f2932226971
+no-permission: '{prefix} &c你没有执行此命令的权限。'
+reload-success: '{prefix} &a配置已重载，玩家世界、工厂数据和数据库连接未重载。'
+only-player-needed: '{prefix} &c此命令仅玩家可用。'
+not-found: '{prefix} &c未找到目标工厂：&f{target}'
+info-server: '{prefix} &a服务器状态 &7| &f工厂总数: {players} &7| &f在线人数: {online} &7| &f存储: {storage} &7| &fPAPI: {placeholderapi} &7| &fVault: {vault} &7| &f全息: {hologram}'
+info-player: '{prefix} &a工厂信息 &7| &f名称: {name} &7| &fID: {id} &7| &f等级: {level} &7| &f地皮: {plotSize} &7| &f金钱: {money} &7| &f工人: {workers} &7| &f设备: {machines} &7| &f离线小时: {offlineHours} &7| &f成就: {achievements}'
+machine-not-found: '{prefix} &c未知设备类型：&f{type}'
+machine-given: '{prefix} &a已发放设备 &f{type} &ax{amount}'

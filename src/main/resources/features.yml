@@ -1,0 +1,11 @@
+# 功能开关与可选依赖
+# 软依赖都写在这里，配置上关闭后，代码也不会去碰对应功能。
+hooks:
+  placeholderapi: true
+  vault: true
+  holographic-displays: true
+  multiverse-core: true
+
+leaderboard:
+  enabled: true
+  size: 10

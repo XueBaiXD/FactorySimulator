@@ -1,0 +1,23 @@
+# 玩家工厂世界生成配置
+# 这里专门控制世界模板、围墙、地板、出生点等。
+world:
+  # 玩家进入时是否自动创建并传送到专属世界
+  auto-create-on-join: true
+
+generation:
+  # 世界环境类型，1.12.2 可用 NORMAL / NETHER / THE_END
+  environment: NORMAL
+  # 虚空世界只保留地皮平台；该高度用于平台以上的旧模板清理范围
+  border-height: 80
+  # 出生点高度
+  spawn-y: 65
+  # 是否采用虚空底层，关闭后会生成实心底层
+  use-void-floor: true
+  # 围墙材料
+  border-material: STONE
+  # 底层材料
+  floor-material: BEDROCK
+  # 地皮表面材料
+  platform-material: GRASS
+  # 中心标记材料
+  center-marker-material: EMERALD_BLOCK

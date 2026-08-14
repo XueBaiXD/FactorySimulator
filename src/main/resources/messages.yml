@@ -1,0 +1,4 @@
+# 语言选择器，不直接存放文案。
+# 支持 en / zh_cn / zh_tw。
+language: zh_cn
+fallback: en

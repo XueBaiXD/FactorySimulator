@@ -1,0 +1,30 @@
+prefix: '&6[FactorySimulator]&r'
+help:
+  header: '{prefix} &6FactorySimulator &7- &fCommand Help'
+  lines:
+    - '&e/{label} help &7- Show this help'
+    - '&e/{label} version &7- Show plugin and author information'
+    - '&e/{label} create &7- Create your factory'
+    - '&e/{label} enter &7- Enter your factory world'
+    - '&e/{label} menu &7- Show tutorial hint'
+    - '&e/{label} rename <name> &7- Rename your factory'
+    - '&e/{label} upgrade &7- Upgrade factory plot'
+    - '&e/{label} buy <machine-id> &7- Buy a machine'
+    - '&e/{label} info [player] &7- View factory information'
+    - '&e/{label} status &7- View server status'
+    - '&e/{label} machine give <machine-id> [amount] &7- Give a machine (admin)'
+    - '&e/{label} reload &7- Reload configuration (admin)'
+version-info: |-
+  &6FactorySimulator &7- &fFactory Simulator
+  &7Version: &f1.0.0
+  &7Author: &fXueBaiXD
+  &7GitHub: &fXueBaiXD
+  &7QQ: &f3987575641 &7/ &f2932226971
+no-permission: '{prefix} &cYou do not have permission to use this command.'
+reload-success: '{prefix} &aConfiguration reloaded. Worlds, factory data and database connections were not reloaded.'
+only-player-needed: '{prefix} &cThis command can only be used by players.'
+not-found: '{prefix} &cFactory not found: &f{target}'
+info-server: '{prefix} &aServer Status &7| &fFactories: {players} &7| &fOnline: {online} &7| &fStorage: {storage} &7| &fPAPI: {placeholderapi} &7| &fVault: {vault} &7| &fHolo: {hologram}'
+info-player: '{prefix} &aFactory Info &7| &fName: {name} &7| &fID: {id} &7| &fLevel: {level} &7| &fPlot: {plotSize} &7| &fMoney: {money} &7| &fWorkers: {workers} &7| &fMachines: {machines} &7| &fOfflineHours: {offlineHours} &7| &fAchievements: {achievements}'
+machine-not-found: '{prefix} &cUnknown machine type: &f{type}'
+machine-given: '{prefix} &aGiven machine &f{type} &ax{amount}'

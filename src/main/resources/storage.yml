@@ -1,0 +1,20 @@
+# 存储配置
+# YAML 适合单机和测试环境；SQLite 适合轻量服；MySQL 适合多人或多服共享。
+storage:
+  type: YAML
+
+  sqlite:
+    # SQLite 数据库文件名，默认存放在插件数据目录下
+    file: factorysimulator.db
+
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    database: factorysimulator
+    user: root
+    password: ''
+    # 兼容 MySQL 5.5/5.6/5.7、MariaDB 5.x 与 Java 8
+    params: useSSL=false&characterEncoding=utf8&autoReconnect=true&useUnicode=true
+
+  # JDBC 连接池大小，预留给后续扩展
+  pool-size: 8
