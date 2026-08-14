@@ -1,10 +1,20 @@
 # FactorySimulator｜工厂模拟器
 
-FactorySimulator 是一个面向 **Paper 1.12.2** 的轻量 RPG 工厂经营插件。玩家可以创建自己的工厂世界，摆放并连接生产设备，出售产物赚取资金，升级工厂地皮与设备，逐步建设自动化生产线。
+FactorySimulator 是一个轻量 RPG 工厂经营插件。玩家可以创建自己的工厂世界，摆放并连接生产设备，出售产物赚取资金，升级工厂地皮与设备，逐步建设自动化生产线。
 
 > 当前版本：`1.0.0`  
 > 作者：`XueBaiXD`  
-> 官网：`play.xuebai.xyz`
+> QQ：3987575641 / 2932226971  
+
+
+> 本插件已经开源
+
+
+https://github.com/XueBaiXD/FactorySimulator
+
+
+https://modrinth.com/plugin/factorysimulator
+
 
 ## 目录
 
@@ -38,7 +48,7 @@ FactorySimulator 是一个面向 **Paper 1.12.2** 的轻量 RPG 工厂经营插�
 
 ### 必需环境
 
-- Minecraft `1.12.2`
+- Minecraft `1.12.2` (推荐的Minecraft版本)
 - Paper `1.12.2`（推荐使用 Paper，不建议使用原版 Spigot）
 - Java `8` 或与当前服务端兼容的 Java 运行环境
 
@@ -47,9 +57,9 @@ FactorySimulator 是一个面向 **Paper 1.12.2** 的轻量 RPG 工厂经营插�
 | 插件 | 用途 | 是否必需 |
 | --- | --- | --- |
 | PlaceholderAPI | 提供工厂变量，供记分板、TAB、聊天、全息等插件调用 | 否 |
-| Vault | 经济生态兼容入口及状态识别 | 否 |
+| Vault | 经济生态兼容入口及状态识别 | 是 |
 | HolographicDisplays | 全息展示生态兼容入口及状态识别 | 否 |
-| Multiverse-Core | 多世界生态兼容入口及状态识别 | 否 |
+| Multiverse-Core | 多世界生态兼容入口及状态识别 | 是 |
 
 插件已经在 `plugin.yml` 中将上述插件声明为 `softdepend`。缺少任意一个插件不会阻止 FactorySimulator 启动。
 
