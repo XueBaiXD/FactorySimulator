@@ -19,7 +19,7 @@ help:
     - '&e/{label} reload &7- 重载配置（管理员）'
 version-info: |-
   &6FactorySimulator &7- &f工厂模拟器
-  &7Version: &f1.1.0
+  &7Version: &f1.1.1
   &7Author: &fXueBaiXD
   &7GitHub: &fXueBaiXD
   &7QQ: &f3987575641 &7/ &f2932226971

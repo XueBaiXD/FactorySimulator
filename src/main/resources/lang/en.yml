@@ -16,7 +16,7 @@ help:
     - '&e/{label} reload &7- Reload configuration (admin)'
 version-info: |-
   &6FactorySimulator &7- &fFactory Simulator
-  &7Version: &f1.1.0
+  &7Version: &f1.1.1
   &7Author: &fXueBaiXD
   &7GitHub: &fXueBaiXD
   &7QQ: &f3987575641 &7/ &f2932226971
