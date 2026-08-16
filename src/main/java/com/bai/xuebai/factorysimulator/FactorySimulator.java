@@ -104,7 +104,7 @@ public final class FactorySimulator extends JavaPlugin {
 
     private void registerCommands() {
         FactoryCommand command = new FactoryCommand(this, factoryService, pluginMessages, machineRegistry);
-        PluginCommand fs = getCommand("fs");
+        PluginCommand fs = getCommand("factorysimulator");
         if (fs != null) {
             fs.setExecutor(command);
             fs.setTabCompleter(command);

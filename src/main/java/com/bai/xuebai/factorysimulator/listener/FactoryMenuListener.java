@@ -55,7 +55,7 @@ public class FactoryMenuListener implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent event) {
-        if (!isFactoryMenu(event.getView().getTitle())) return;
+        if (isFactoryMenu(event.getView().getTitle())) return;
         if ("§8工厂出售".equals(event.getView().getTitle())) {
             if (event.getRawSlot() == 22) {
                 event.setCancelled(true);
@@ -105,7 +105,7 @@ public class FactoryMenuListener implements Listener {
 
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
-        if (!isFactoryMenu(event.getView().getTitle())) return;
+        if (isFactoryMenu(event.getView().getTitle())) return;
         if (!"§8工厂出售".equals(event.getView().getTitle())) {
             event.setCancelled(true);
             return;
@@ -119,7 +119,7 @@ public class FactoryMenuListener implements Listener {
     }
 
     private boolean isFactoryMenu(String title) {
-        return "§8工厂模拟器".equals(title) || "§8设备商店".equals(title) || "§8机器搭配指南".equals(title) || "§8工厂出售".equals(title);
+        return !"§8工厂模拟器".equals(title) && !"§8设备商店".equals(title) && !"§8机器搭配指南".equals(title) && !"§8工厂出售".equals(title);
     }
 
     private void recycle(Player player) {

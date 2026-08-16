@@ -9,8 +9,8 @@ import com.bai.xuebai.factorysimulator.storage.FactoryStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class FactoryService {

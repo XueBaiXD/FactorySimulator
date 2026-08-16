@@ -3,17 +3,13 @@ version: '${project.version}'
 main: com.bai.xuebai.factorysimulator.FactorySimulator
 prefix: FactorySimulator
 load: STARTUP
-authors: [XueBaiXD]
+authors: [ XueBaiXD ]
 description: 工厂模拟器插件
-website: play.xuebai.xyz
 commands:
-  fs:
-    description: FactorySimulator 主命令
-    usage: /fs <help|version|create|enter|menu|rename|upgrade|buy [数量]|info|status|machine give <玩家> <设备ID> [数量]|reload>
-    aliases: [factory, factorysimulator]
   factorysimulator:
     description: FactorySimulator 主命令
-    usage: /factorysimulator <info|status>
+    usage: /factorysimulator <help|version|create|enter|menu|rename|upgrade|buy [数量]|info|status|machine give <玩家> <设备ID> [数量]|reload>
+    aliases: [ factory, fs ]
 permissions:
   factorysimulator.admin:
     description: 工厂模拟器管理员权限

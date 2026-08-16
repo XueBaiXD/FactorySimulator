@@ -55,11 +55,10 @@ public class FactoryPlaceholderExpansion extends PlaceholderExpansion {
             case "created":
                 return String.valueOf(profile.isCreated());
             case "rank_money":
+            case "rank":
                 return String.valueOf(plugin.getFactoryService().getRank(profile, false));
             case "rank_level":
                 return String.valueOf(plugin.getFactoryService().getRank(profile, true));
-            case "rank":
-                return String.valueOf(plugin.getFactoryService().getRank(profile, false));
             case "achievements":
             case "achievement_count":
                 return String.valueOf(profile.getAchievements().size());
