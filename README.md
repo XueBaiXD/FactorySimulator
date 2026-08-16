@@ -2,13 +2,16 @@
 
 FactorySimulator 是一个轻量 RPG 工厂经营插件。玩家可以创建自己的工厂世界，摆放并连接生产设备，出售产物赚取资金，升级工厂地皮与设备，逐步建设自动化生产线。
 
-> 当前版本：`1.0.1`
-> 作者：`XueBaiXD`  
+> 当前版本：`1.0.2`
+
+> 作者：`XueBaiXD`
+
 > QQ：3987575641 / 2932226971  
 
 > 本插件已经开源
 
 https://github.com/XueBaiXD/FactorySimulator
+
 https://modrinth.com/plugin/factorysimulator
 
 ## 目录

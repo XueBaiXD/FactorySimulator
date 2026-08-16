@@ -11,7 +11,7 @@ public class LibraryManager {
     public LibraryManager(FactorySimulator plugin) {
         this.plugin = plugin;
         File pluginsFolder = plugin.getDataFolder().getParentFile();
-        File serverRoot = pluginsFolder != null ? pluginsFolder.getParentFile() : plugin.getDataFolder().getParentFile();
+        File serverRoot = pluginsFolder != null ? pluginsFolder.getParentFile() : null;
         this.libsFolder = new File(serverRoot != null ? serverRoot : plugin.getDataFolder(), "libraries");
     }
 

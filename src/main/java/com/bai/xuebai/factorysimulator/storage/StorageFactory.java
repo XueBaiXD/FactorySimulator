@@ -7,7 +7,8 @@ import com.bai.xuebai.factorysimulator.storage.jdbc.JdbcFactoryStorage;
 import com.bai.xuebai.factorysimulator.storage.yaml.YamlFactoryStorage;
 
 public final class StorageFactory {
-    private StorageFactory() {}
+    private StorageFactory() {
+    }
 
     public static FactoryStorage create(FactorySimulator plugin, PluginConfig config) {
         StorageType type = config.getStorageType();

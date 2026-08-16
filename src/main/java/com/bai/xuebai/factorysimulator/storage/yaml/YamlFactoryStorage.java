@@ -1,6 +1,7 @@
 package com.bai.xuebai.factorysimulator.storage.yaml;
 
 import com.bai.xuebai.factorysimulator.FactorySimulator;
+import com.bai.xuebai.factorysimulator.config.PluginConfig;
 import com.bai.xuebai.factorysimulator.model.FactoryProfile;
 import com.bai.xuebai.factorysimulator.model.PlacedMachine;
 import com.bai.xuebai.factorysimulator.storage.FactoryStorage;
@@ -8,19 +9,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.HashSet;
-import com.bai.xuebai.factorysimulator.config.PluginConfig;
+import java.util.*;
 
 public class YamlFactoryStorage implements FactoryStorage {
     private final FactorySimulator plugin;
     private final File folder;
-    private final Map<String, FactoryProfile> cache = new HashMap<String, FactoryProfile>();
+    private final Map<String, FactoryProfile> cache = new HashMap<>();
 
     public YamlFactoryStorage(FactorySimulator plugin) {
         this.plugin = plugin;
@@ -45,13 +39,14 @@ public class YamlFactoryStorage implements FactoryStorage {
 
     @Override
     public void saveAll() {
-        for (FactoryProfile profile : new ArrayList<FactoryProfile>(cache.values())) {
+        for (FactoryProfile profile : new ArrayList<>(cache.values())) {
             save(profile);
         }
     }
 
     @Override
-    public void close() {}
+    public void close() {
+    }
 
     @Override
     public FactoryProfile getOrCreate(UUID uuid, String playerName) {
@@ -80,7 +75,7 @@ public class YamlFactoryStorage implements FactoryStorage {
                 return profile;
             }
         }
-        for (File file : folder.listFiles()) {
+        for (File file : Objects.requireNonNull(folder.listFiles())) {
             FactoryProfile profile = load(file);
             if (profile != null && profile.getPlayerName() != null && profile.getPlayerName().equalsIgnoreCase(name)) {
                 cache.put(profile.getPlayerId(), profile);
@@ -116,15 +111,19 @@ public class YamlFactoryStorage implements FactoryStorage {
         yaml.set("offlineStoredMoney", profile.getOfflineStoredMoney());
         yaml.set("workers", profile.getWorkers());
         yaml.set("machines", profile.getMachines());
-        yaml.set("achievements", new ArrayList<String>(profile.getAchievements()));
+        yaml.set("achievements", new ArrayList<>(profile.getAchievements()));
         yaml.set("unlockedMachines", profile.getUnlockedMachines());
-        ArrayList<Map<String, Object>> layout = new ArrayList<Map<String, Object>>();
+        ArrayList<Map<String, Object>> layout = new ArrayList<>();
         for (PlacedMachine machine : profile.getLayout()) {
-            Map<String, Object> value = new HashMap<String, Object>();
+            Map<String, Object> value = new HashMap<>();
             value.put("type", machine.getType());
-            value.put("x", machine.getX()); value.put("y", machine.getY()); value.put("z", machine.getZ());
-            value.put("facing", machine.getFacing()); value.put("level", machine.getLevel());
-            value.put("progress", machine.getProgress()); value.put("inventory", machine.getInventory());
+            value.put("x", machine.getX());
+            value.put("y", machine.getY());
+            value.put("z", machine.getZ());
+            value.put("facing", machine.getFacing());
+            value.put("level", machine.getLevel());
+            value.put("progress", machine.getProgress());
+            value.put("inventory", machine.getInventory());
             layout.add(value);
         }
         yaml.set("layout", layout);
@@ -189,15 +188,18 @@ public class YamlFactoryStorage implements FactoryStorage {
         profile.getAchievements().addAll(yaml.getStringList("achievements"));
         profile.getUnlockedMachines().addAll(yaml.getStringList("unlockedMachines"));
         for (Map<?, ?> rawValue : yaml.getMapList("layout")) {
-            Map<String, Object> value = new HashMap<String, Object>();
+            Map<String, Object> value = new HashMap<>();
             for (Map.Entry<?, ?> entry : rawValue.entrySet()) {
                 value.put(String.valueOf(entry.getKey()), entry.getValue());
             }
             PlacedMachine machine = new PlacedMachine();
             machine.setType(String.valueOf(value.get("type")));
-            machine.setX(number(value.get("x"))); machine.setY(number(value.get("y"))); machine.setZ(number(value.get("z")));
+            machine.setX(number(value.get("x")));
+            machine.setY(number(value.get("y")));
+            machine.setZ(number(value.get("z")));
             machine.setFacing(String.valueOf(value.get("facing")));
-            machine.setLevel(number(value.get("level"))); machine.setProgress(longNumber(value.get("progress")));
+            machine.setLevel(number(value.get("level")));
+            machine.setProgress(longNumber(value.get("progress")));
             Object inventory = value.get("inventory");
             if (inventory instanceof Map) {
                 for (Map.Entry<?, ?> entry : ((Map<?, ?>) inventory).entrySet()) {

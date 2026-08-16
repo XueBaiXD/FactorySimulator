@@ -12,7 +12,6 @@ import java.util.List;
 
 public class PluginMessages {
     private final FactorySimulator plugin;
-    private FileConfiguration selectorConfig;
     private FileConfiguration languageConfig;
     private String languageCode;
 
@@ -23,7 +22,7 @@ public class PluginMessages {
 
     public final void reload() {
         File selectorFile = new File(plugin.getDataFolder(), "messages.yml");
-        this.selectorConfig = YamlConfiguration.loadConfiguration(selectorFile);
+        FileConfiguration selectorConfig = YamlConfiguration.loadConfiguration(selectorFile);
         this.languageCode = normalizeLanguage(selectorConfig.getString("language", "zh_cn"));
 
         File languageFile = new File(plugin.getDataFolder(), "lang/" + languageCode + ".yml");
@@ -66,7 +65,7 @@ public class PluginMessages {
     }
 
     public List<String> help(String label) {
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         String header = languageConfig.getString("help.header");
         if (header != null && !header.trim().isEmpty()) {
             lines.add(formatValue(header, "label", label));

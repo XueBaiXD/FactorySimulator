@@ -10,7 +10,8 @@ import java.util.Arrays;
 public final class ProductItemService {
     private static final String MARKER = "§0FS_PRODUCT:";
 
-    private ProductItemService() {}
+    private ProductItemService() {
+    }
 
     public static ItemStack create(String id, int amount, double price) {
         Product product = product(id);
@@ -61,6 +62,10 @@ public final class ProductItemService {
     private static class Product {
         private final String name;
         private final Material material;
-        private Product(String name, Material material) { this.name = name; this.material = material; }
+
+        private Product(String name, Material material) {
+            this.name = name;
+            this.material = material;
+        }
     }
 }

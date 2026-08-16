@@ -6,26 +6,14 @@ import com.bai.xuebai.factorysimulator.model.FactoryProfile;
 import com.bai.xuebai.factorysimulator.model.PlacedMachine;
 import com.bai.xuebai.factorysimulator.storage.FactoryStorage;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.sql.*;
+import java.util.*;
 
 public class JdbcFactoryStorage implements FactoryStorage {
     private final FactorySimulator plugin;
     private final PluginConfig config;
-    private final Map<String, FactoryProfile> cache = new HashMap<String, FactoryProfile>();
+    private final Map<String, FactoryProfile> cache = new HashMap<>();
     private Connection connection;
-    private boolean sqlite;
 
     public JdbcFactoryStorage(FactorySimulator plugin, PluginConfig config) {
         this.plugin = plugin;
@@ -35,7 +23,7 @@ public class JdbcFactoryStorage implements FactoryStorage {
     @Override
     public void load() {
         try {
-            this.sqlite = config.getStorageType().name().equalsIgnoreCase("SQLITE");
+            boolean sqlite = config.getStorageType().name().equalsIgnoreCase("SQLITE");
             if (sqlite) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + new java.io.File(plugin.getDataFolder(), config.getSqliteFileName()).getAbsolutePath());
             } else {
@@ -61,7 +49,7 @@ public class JdbcFactoryStorage implements FactoryStorage {
 
     @Override
     public void saveAll() {
-        for (FactoryProfile profile : new ArrayList<FactoryProfile>(cache.values())) {
+        for (FactoryProfile profile : new ArrayList<>(cache.values())) {
             save(profile);
         }
     }
@@ -69,7 +57,10 @@ public class JdbcFactoryStorage implements FactoryStorage {
     @Override
     public void close() {
         if (connection != null) {
-            try { connection.close(); } catch (SQLException ignored) {}
+            try {
+                connection.close();
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -140,9 +131,18 @@ public class JdbcFactoryStorage implements FactoryStorage {
     private void createTables() throws SQLException {
         try (Statement st = connection.createStatement()) {
             st.executeUpdate("CREATE TABLE IF NOT EXISTS factory_profiles (player_id VARCHAR(64) PRIMARY KEY, player_name VARCHAR(32), world_name VARCHAR(64), factory_name VARCHAR(64), created TINYINT, created_at BIGINT, last_online_at BIGINT, last_claim_at BIGINT, level INT, plot_size INT, money DOUBLE, offline_stored_money DOUBLE, workers INT, machines INT, achievements TEXT, unlocked_machines TEXT, layout TEXT)");
-            try { st.executeUpdate("ALTER TABLE factory_profiles ADD COLUMN factory_name VARCHAR(64)"); } catch (SQLException ignored) {}
-            try { st.executeUpdate("ALTER TABLE factory_profiles ADD COLUMN created TINYINT"); } catch (SQLException ignored) {}
-            try { st.executeUpdate("ALTER TABLE factory_profiles ADD COLUMN layout TEXT"); } catch (SQLException ignored) {}
+            try {
+                st.executeUpdate("ALTER TABLE factory_profiles ADD COLUMN factory_name VARCHAR(64)");
+            } catch (SQLException ignored) {
+            }
+            try {
+                st.executeUpdate("ALTER TABLE factory_profiles ADD COLUMN created TINYINT");
+            } catch (SQLException ignored) {
+            }
+            try {
+                st.executeUpdate("ALTER TABLE factory_profiles ADD COLUMN layout TEXT");
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -209,11 +209,20 @@ public class JdbcFactoryStorage implements FactoryStorage {
         ps.setString(1, profile.getPlayerId());
         ps.setString(2, profile.getPlayerName());
         ps.setString(3, profile.getWorldName());
-        ps.setString(4, profile.getFactoryName()); ps.setBoolean(5, profile.isCreated());
-        ps.setLong(6, profile.getCreatedAt()); ps.setLong(7, profile.getLastOnlineAt()); ps.setLong(8, profile.getLastClaimAt());
-        ps.setInt(9, profile.getLevel()); ps.setInt(10, profile.getPlotSize()); ps.setDouble(11, profile.getMoney());
-        ps.setDouble(12, profile.getOfflineStoredMoney()); ps.setInt(13, profile.getWorkers()); ps.setInt(14, profile.getMachines());
-        ps.setString(15, join(profile.getAchievements())); ps.setString(16, join(profile.getUnlockedMachines())); ps.setString(17, encodeLayout(profile));
+        ps.setString(4, profile.getFactoryName());
+        ps.setBoolean(5, profile.isCreated());
+        ps.setLong(6, profile.getCreatedAt());
+        ps.setLong(7, profile.getLastOnlineAt());
+        ps.setLong(8, profile.getLastClaimAt());
+        ps.setInt(9, profile.getLevel());
+        ps.setInt(10, profile.getPlotSize());
+        ps.setDouble(11, profile.getMoney());
+        ps.setDouble(12, profile.getOfflineStoredMoney());
+        ps.setInt(13, profile.getWorkers());
+        ps.setInt(14, profile.getMachines());
+        ps.setString(15, join(profile.getAchievements()));
+        ps.setString(16, join(profile.getUnlockedMachines()));
+        ps.setString(17, encodeLayout(profile));
     }
 
     private String encodeLayout(FactoryProfile profile) {
@@ -224,7 +233,8 @@ public class JdbcFactoryStorage implements FactoryStorage {
             boolean first = true;
             for (Map.Entry<String, Integer> entry : machine.getInventory().entrySet()) {
                 if (!first) result.append(',');
-                result.append(entry.getKey()).append(':').append(entry.getValue()); first = false;
+                result.append(entry.getKey()).append(':').append(entry.getValue());
+                first = false;
             }
         }
         return result.toString();
@@ -237,13 +247,15 @@ public class JdbcFactoryStorage implements FactoryStorage {
             if (parts.length < 8) continue;
             try {
                 PlacedMachine machine = new PlacedMachine(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), parts[4]);
-                machine.setLevel(Integer.parseInt(parts[5])); machine.setProgress(Long.parseLong(parts[6]));
+                machine.setLevel(Integer.parseInt(parts[5]));
+                machine.setProgress(Long.parseLong(parts[6]));
                 if (!parts[7].isEmpty()) for (String item : parts[7].split(",")) {
                     String[] pair = item.split(":", 2);
                     if (pair.length == 2) machine.getInventory().put(pair[0], Integer.parseInt(pair[1]));
                 }
                 profile.getLayout().add(machine);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
     }
 
@@ -259,13 +271,13 @@ public class JdbcFactoryStorage implements FactoryStorage {
     }
 
     private List<String> splitList(String value) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (value == null || value.trim().isEmpty()) return list;
         for (String s : value.split(",")) list.add(s);
         return list;
     }
 
     private java.util.Set<String> splitSet(String value) {
-        return new java.util.HashSet<String>(splitList(value));
+        return new java.util.HashSet<>(splitList(value));
     }
 }

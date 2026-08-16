@@ -3,24 +3,20 @@ package com.bai.xuebai.factorysimulator;
 import com.bai.xuebai.factorysimulator.command.FactoryCommand;
 import com.bai.xuebai.factorysimulator.config.PluginConfig;
 import com.bai.xuebai.factorysimulator.config.PluginMessages;
-import com.bai.xuebai.factorysimulator.listener.PlayerJoinListener;
+import com.bai.xuebai.factorysimulator.hook.FactoryPlaceholderHook;
 import com.bai.xuebai.factorysimulator.listener.FactoryBlockListener;
 import com.bai.xuebai.factorysimulator.listener.FactoryMenuListener;
 import com.bai.xuebai.factorysimulator.listener.FactoryWorldListener;
-import com.bai.xuebai.factorysimulator.service.FactoryService;
-import com.bai.xuebai.factorysimulator.service.LibraryManager;
-import com.bai.xuebai.factorysimulator.service.MachineRegistry;
-import com.bai.xuebai.factorysimulator.service.FactoryTicker;
-import com.bai.xuebai.factorysimulator.service.WorldService;
+import com.bai.xuebai.factorysimulator.listener.PlayerJoinListener;
+import com.bai.xuebai.factorysimulator.platform.RuntimePlatform;
+import com.bai.xuebai.factorysimulator.service.*;
 import com.bai.xuebai.factorysimulator.storage.FactoryStorage;
 import com.bai.xuebai.factorysimulator.storage.StorageFactory;
-import com.bai.xuebai.factorysimulator.platform.RuntimePlatform;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import com.bai.xuebai.factorysimulator.hook.FactoryPlaceholderHook;
 
 public final class FactorySimulator extends JavaPlugin {
 
@@ -31,9 +27,12 @@ public final class FactorySimulator extends JavaPlugin {
     private FactoryStorage storage;
     private FactoryService factoryService;
     private WorldService worldService;
-    private LibraryManager libraryManager;
     private MachineRegistry machineRegistry;
     private boolean initialized;
+
+    public static FactorySimulator getInstance() {
+        return instance;
+    }
 
     @Override
     public void onEnable() {
@@ -47,30 +46,19 @@ public final class FactorySimulator extends JavaPlugin {
         this.pluginConfig = new PluginConfig(this);
         this.pluginMessages = new PluginMessages(this);
 
-        this.libraryManager = new LibraryManager(this);
-        this.libraryManager.bootstrap();
+        LibraryManager libraryManager = new LibraryManager(this);
+        libraryManager.bootstrap();
 
         this.storage = StorageFactory.create(this, pluginConfig);
-        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    storage.load();
-                    Bukkit.getScheduler().runTask(FactorySimulator.this, new Runnable() {
-                        @Override
-                        public void run() {
-                            finishEnable();
-                        }
-                    });
-                } catch (RuntimeException exception) {
-                    Bukkit.getScheduler().runTask(FactorySimulator.this, new Runnable() {
-                        @Override
-                        public void run() {
-                            getLogger().severe("FactorySimulator 存储初始化失败: " + exception.getMessage());
-                            getServer().getPluginManager().disablePlugin(FactorySimulator.this);
-                        }
-                    });
-                }
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                storage.load();
+                Bukkit.getScheduler().runTask(FactorySimulator.this, this::finishEnable);
+            } catch (RuntimeException exception) {
+                Bukkit.getScheduler().runTask(FactorySimulator.this, () -> {
+                    getLogger().severe("FactorySimulator 存储初始化失败: " + exception.getMessage());
+                    getServer().getPluginManager().disablePlugin(FactorySimulator.this);
+                });
             }
         });
     }
@@ -146,10 +134,6 @@ public final class FactorySimulator extends JavaPlugin {
         saveResource("lang/zh_tw.yml", false);
     }
 
-    public static FactorySimulator getInstance() {
-        return instance;
-    }
-
     public PluginConfig getPluginConfig() {
         return pluginConfig;
     }
@@ -178,5 +162,7 @@ public final class FactorySimulator extends JavaPlugin {
         return new File(getDataFolder(), "data");
     }
 
-    public MachineRegistry getMachineRegistry() { return machineRegistry; }
+    public MachineRegistry getMachineRegistry() {
+        return machineRegistry;
+    }
 }
