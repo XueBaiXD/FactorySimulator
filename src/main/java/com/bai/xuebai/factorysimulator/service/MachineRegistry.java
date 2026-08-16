@@ -8,13 +8,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MachineRegistry {
     private final PluginConfig config;
-    private final Map<String, MachineDefinition> definitions = new LinkedHashMap<String, MachineDefinition>();
+    private final Map<String, MachineDefinition> definitions = new LinkedHashMap<>();
 
     public MachineRegistry(PluginConfig config) {
         this.config = config;
@@ -46,8 +45,13 @@ public class MachineRegistry {
         definitions.put(id, new MachineDefinition(id, name, material, input, output, recipe, product));
     }
 
-    public MachineDefinition get(String id) { return definitions.get(id); }
-    public Map<String, MachineDefinition> all() { return Collections.unmodifiableMap(definitions); }
+    public MachineDefinition get(String id) {
+        return definitions.get(id);
+    }
+
+    public Map<String, MachineDefinition> all() {
+        return Collections.unmodifiableMap(definitions);
+    }
 
     public ItemStack createItem(String id, int amount) {
         MachineDefinition definition = get(id);
@@ -88,7 +92,8 @@ public class MachineRegistry {
 
     public boolean isProtectedPickaxe(ItemStack item) {
         if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore()) return false;
-        for (String line : item.getItemMeta().getLore()) if ("FS_PICKAXE".equals(ChatColor.stripColor(line))) return true;
+        for (String line : item.getItemMeta().getLore())
+            if ("FS_PICKAXE".equals(ChatColor.stripColor(line))) return true;
         return false;
     }
 
@@ -103,7 +108,8 @@ public class MachineRegistry {
 
     public boolean isTutorialBook(ItemStack item) {
         if (item == null || !item.hasItemMeta() || !item.getItemMeta().hasLore()) return false;
-        for (String line : item.getItemMeta().getLore()) if ("FS_TUTORIAL".equals(ChatColor.stripColor(line))) return true;
+        for (String line : item.getItemMeta().getLore())
+            if ("FS_TUTORIAL".equals(ChatColor.stripColor(line))) return true;
         return false;
     }
 
@@ -117,14 +123,41 @@ public class MachineRegistry {
         private final String product;
 
         public MachineDefinition(String id, String name, Material material, int input, int output, String recipe, String product) {
-            this.id = id; this.name = name; this.material = material; this.input = input; this.output = output; this.recipe = recipe; this.product = product;
+            this.id = id;
+            this.name = name;
+            this.material = material;
+            this.input = input;
+            this.output = output;
+            this.recipe = recipe;
+            this.product = product;
         }
-        public String getId() { return id; }
-        public String getName() { return name; }
-        public Material getMaterial() { return material; }
-        public int getInput() { return input; }
-        public int getOutput() { return output; }
-        public String getRecipe() { return recipe; }
-        public String getProduct() { return product; }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Material getMaterial() {
+            return material;
+        }
+
+        public int getInput() {
+            return input;
+        }
+
+        public int getOutput() {
+            return output;
+        }
+
+        public String getRecipe() {
+            return recipe;
+        }
+
+        public String getProduct() {
+            return product;
+        }
     }
 }

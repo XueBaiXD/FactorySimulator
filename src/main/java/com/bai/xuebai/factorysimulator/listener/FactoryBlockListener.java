@@ -6,7 +6,6 @@ import com.bai.xuebai.factorysimulator.service.FactoryService;
 import com.bai.xuebai.factorysimulator.service.MachineRegistry;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -55,7 +54,7 @@ public class FactoryBlockListener implements Listener {
         }
         PlacedMachine machine = service.findMachine(profile, event.getBlock().getX(), event.getBlock().getY(), event.getBlock().getZ());
         if (machine == null) return;
-        if (!registry.isProtectedPickaxe(event.getPlayer().getItemInHand())) {
+        if (!registry.isProtectedPickaxe(event.getPlayer().getInventory().getItemInMainHand())) {
             event.setCancelled(true);
             event.getPlayer().sendMessage(ChatColor.RED + "只有工厂拆卸镐可以拆除设备。");
             return;
@@ -70,6 +69,9 @@ public class FactoryBlockListener implements Listener {
 
     private void remove(FactoryProfile profile, PlacedMachine target) {
         Iterator<PlacedMachine> iterator = profile.getLayout().iterator();
-        while (iterator.hasNext()) if (iterator.next() == target) { iterator.remove(); return; }
+        while (iterator.hasNext()) if (iterator.next() == target) {
+            iterator.remove();
+            return;
+        }
     }
 }

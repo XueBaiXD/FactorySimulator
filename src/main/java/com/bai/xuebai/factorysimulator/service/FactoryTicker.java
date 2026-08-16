@@ -4,13 +4,12 @@ import com.bai.xuebai.factorysimulator.FactorySimulator;
 import com.bai.xuebai.factorysimulator.config.PluginConfig;
 import com.bai.xuebai.factorysimulator.model.FactoryProfile;
 import com.bai.xuebai.factorysimulator.model.PlacedMachine;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.entity.Item;
 
 import java.util.Map;
 
@@ -20,7 +19,9 @@ public class FactoryTicker implements Runnable {
     private final FactoryService service;
 
     public FactoryTicker(FactorySimulator plugin, PluginConfig config, FactoryService service) {
-        this.plugin = plugin; this.config = config; this.service = service;
+        this.plugin = plugin;
+        this.config = config;
+        this.service = service;
     }
 
     @Override
@@ -60,7 +61,7 @@ public class FactoryTicker implements Runnable {
                     changed |= convert(machine, "gold_ore", "gold_ingot");
                     changed |= convert(machine, "iron_ore", "iron_ingot");
                 } else if ("seller".equals(machine.getType())) {
-                    for (Map.Entry<String, Integer> entry : new java.util.HashMap<String, Integer>(machine.getInventory()).entrySet()) {
+                    for (Map.Entry<String, Integer> entry : new java.util.HashMap<>(machine.getInventory()).entrySet()) {
                         Integer amount = entry.getValue();
                         if (amount != null && amount > 0) {
                             profile.setMoney(profile.getMoney() + amount * getSellPrice(entry.getKey()));
@@ -72,7 +73,7 @@ public class FactoryTicker implements Runnable {
             }
             for (PlacedMachine machine : profile.getLayout()) {
                 if ("storage".equals(machine.getType())) continue;
-                for (String product : new java.util.ArrayList<String>(machine.getInventory().keySet())) {
+                for (String product : new java.util.ArrayList<>(machine.getInventory().keySet())) {
                     changed |= moveOne(profile, world, machine, product);
                 }
             }
@@ -119,8 +120,9 @@ public class FactoryTicker implements Runnable {
         Integer amount = source.getInventory().get(product);
         if (amount == null || amount <= 0) return false;
         PlacedMachine target = findOutputTarget(profile, source, product);
-        if (target == null || !accept(target, world, product, 1)) return false;
-        if (amount == 1) source.getInventory().remove(product); else source.getInventory().put(product, amount - 1);
+        if (target == null || !accept(target, world, product)) return false;
+        if (amount == 1) source.getInventory().remove(product);
+        else source.getInventory().put(product, amount - 1);
         return true;
     }
 
@@ -143,20 +145,19 @@ public class FactoryTicker implements Runnable {
                 || ("assembler".equals(machine.getType()) && "iron_ingot".equals(product));
     }
 
-    private boolean accept(PlacedMachine target, World world, String product, int amount) {
+    private boolean accept(PlacedMachine target, World world, String product) {
         if ("storage".equals(target.getType())) {
             Block block = world.getBlockAt(target.getX(), target.getY(), target.getZ());
             if (!(block.getState() instanceof org.bukkit.block.Container)) return false;
             Inventory inventory = ((org.bukkit.block.Container) block.getState()).getInventory();
-            ItemStack[] before = inventory.getContents();
-            java.util.Map<Integer, ItemStack> leftovers = inventory.addItem(createProduct(product, amount));
-            int accepted = amount;
+            java.util.Map<Integer, ItemStack> leftovers = inventory.addItem(createProduct(product, 1));
+            int accepted = 1;
             for (ItemStack leftover : leftovers.values()) accepted -= leftover.getAmount();
             if (accepted <= 0) return false;
             add(target.getInventory(), product, accepted);
             return true;
         }
-        add(target.getInventory(), product, amount);
+        add(target.getInventory(), product, 1);
         return true;
     }
 
@@ -185,7 +186,8 @@ public class FactoryTicker implements Runnable {
             Inventory inventory = ((org.bukkit.block.Container) block.getState()).getInventory();
             inventory.clear();
             for (Map.Entry<String, Integer> entry : machine.getInventory().entrySet()) {
-                if (entry.getValue() != null && entry.getValue() > 0) inventory.addItem(createProduct(entry.getKey(), entry.getValue()));
+                if (entry.getValue() != null && entry.getValue() > 0)
+                    inventory.addItem(createProduct(entry.getKey(), entry.getValue()));
             }
         }
     }
@@ -225,8 +227,7 @@ public class FactoryTicker implements Runnable {
     }
 
     private void add(Map<String, Integer> inventory, String id, int amount) {
-        Integer old = inventory.get(id);
-        inventory.put(id, (old == null ? 0 : old) + amount);
+        inventory.compute(id, (k, old) -> (old == null ? 0 : old) + amount);
     }
 
     private double getSellPrice(String product) {

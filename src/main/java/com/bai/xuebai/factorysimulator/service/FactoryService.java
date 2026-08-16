@@ -7,7 +7,6 @@ import com.bai.xuebai.factorysimulator.model.FactoryProfile;
 import com.bai.xuebai.factorysimulator.model.PlacedMachine;
 import com.bai.xuebai.factorysimulator.storage.FactoryStorage;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;

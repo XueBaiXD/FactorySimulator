@@ -4,23 +4,17 @@ import com.bai.xuebai.factorysimulator.FactorySimulator;
 import com.bai.xuebai.factorysimulator.config.PluginConfig;
 import com.bai.xuebai.factorysimulator.model.FactoryProfile;
 import com.bai.xuebai.factorysimulator.storage.FactoryStorage;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Random;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collection;
+import java.util.Random;
 
 public class WorldService {
     private final FactorySimulator plugin;
@@ -67,8 +61,8 @@ public class WorldService {
         creator.generateStructures(false);
         creator.generator(new ChunkGenerator() {
             @Override
-            public byte[][] generateBlockSections(World world, Random random, int x, int z, BiomeGrid biome) {
-                return new byte[world.getMaxHeight() / 16][];
+            public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biome) {
+                return createChunkData(world);
             }
         });
         world = Bukkit.createWorld(creator);
@@ -180,7 +174,8 @@ public class WorldService {
                 for (int y = 0; y <= maxHeight; y++) {
                     if (platform && y == 64) continue;
                     if (containsMachine(machines, x, y, z)) continue;
-                    if (world.getBlockAt(x, y, z).getType() != Material.AIR) world.getBlockAt(x, y, z).setType(Material.AIR);
+                    if (world.getBlockAt(x, y, z).getType() != Material.AIR)
+                        world.getBlockAt(x, y, z).setType(Material.AIR);
                 }
             }
         }
@@ -202,7 +197,7 @@ public class WorldService {
     }
 
     private void restoreMachines(World world, FactoryProfile profile) {
-        Map<String, Material> materials = new HashMap<String, Material>();
+        Map<String, Material> materials = new HashMap<>();
         materials.put("basic_miner", Material.DISPENSER);
         materials.put("conveyor", Material.HOPPER);
         materials.put("coal_miner", Material.DROPPER);
