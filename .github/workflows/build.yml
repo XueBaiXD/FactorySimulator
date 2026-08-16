@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Zulu JDK 8
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: '8'
