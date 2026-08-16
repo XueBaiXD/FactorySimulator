@@ -109,6 +109,40 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
             }
             return true;
         }
+        if (args[0].equalsIgnoreCase("workers")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(messages.get("only-player-needed"));
+                return true;
+            }
+            Player player = (Player) sender;
+            if (args.length < 2 || args[1].equalsIgnoreCase("info")) {
+                FactoryProfile profile = service.getOrCreate(player);
+                player.sendMessage(messages.format("workers-info", "workers", profile.getWorkers(), "max", pluginConfig().getMaxWorkers(), "hire", pluginConfig().getWorkerHireCost()));
+            } else if (args[1].equalsIgnoreCase("hire")) {
+                player.sendMessage(service.hireWorker(player) ? messages.get("worker-hired") : messages.get("worker-hire-failed"));
+            } else if (args[1].equalsIgnoreCase("fire")) {
+                player.sendMessage(service.fireWorker(player) ? messages.get("worker-fired") : messages.get("worker-fire-failed"));
+            }
+            return true;
+        }
+        if (args[0].equalsIgnoreCase("machine") && args.length >= 2 && args[1].equalsIgnoreCase("upgrade")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(messages.get("only-player-needed"));
+                return true;
+            }
+            Player player = (Player) sender;
+            org.bukkit.block.Block block = player.getTargetBlock(null, 6);
+            FactoryProfile profile = service.getOrCreate(player);
+            com.bai.xuebai.factorysimulator.model.PlacedMachine machine = service.findMachine(profile, block.getX(), block.getY(), block.getZ());
+            if (machine == null) player.sendMessage(messages.get("machine-upgrade-target"));
+            else {
+                double cost = service.getMachineUpgradeCost(machine);
+                player.sendMessage(service.upgradeMachine(player, block.getX(), block.getY(), block.getZ())
+                        ? messages.format("machine-upgraded", "level", machine.getLevel())
+                        : messages.format("machine-upgrade-failed", "cost", String.format("%.2f", cost)));
+            }
+            return true;
+        }
         if (args[0].equalsIgnoreCase("buy") && args.length >= 2 && sender instanceof Player) {
             Player player = (Player) sender;
             String id = args[1].toLowerCase();
@@ -200,6 +234,20 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(service.formatServerStatus());
             return true;
         }
+        if (args[0].equalsIgnoreCase("top") || args[0].equalsIgnoreCase("leaderboard")) {
+            if (!pluginConfig().isLeaderboardEnabled()) {
+                sender.sendMessage(messages.get("leaderboard-disabled"));
+                return true;
+            }
+            boolean byLevel = args.length >= 2 && args[1].equalsIgnoreCase("level");
+            int index = 1;
+            List<FactoryProfile> ranking = service.leaderboard(byLevel);
+            sender.sendMessage(messages.format("leaderboard-header", "type", byLevel ? "等级" : "资金"));
+            for (FactoryProfile profile : ranking.subList(0, Math.min(pluginConfig().getLeaderboardSize(), ranking.size()))) {
+                sender.sendMessage(messages.format("leaderboard-line", "rank", index++, "player", profile.getPlayerName(), "value", byLevel ? profile.getLevel() : String.format("%.2f", profile.getMoney())));
+            }
+            return true;
+        }
         sendHelp(sender, label);
         return true;
     }
@@ -213,10 +261,12 @@ public class FactoryCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return filter(Arrays.asList("help", "version", "create", "enter", "menu", "rename", "upgrade", "buy", "info", "status", "server", "machine", "reload"), args[0]);
+            return filter(Arrays.asList("help", "version", "create", "enter", "menu", "rename", "upgrade", "workers", "buy", "info", "top", "status", "server", "machine", "reload"), args[0]);
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("machine"))
-            return filter(Collections.singletonList("give"), args[1]);
+            return filter(Arrays.asList("give", "upgrade"), args[1]);
+        if (args.length == 2 && args[0].equalsIgnoreCase("workers"))
+            return filter(Arrays.asList("info", "hire", "fire"), args[1]);
         if (args.length == 3 && args[0].equalsIgnoreCase("machine") && args[1].equalsIgnoreCase("give")) {
             List<String> options = new ArrayList<>();
             for (Player player : Bukkit.getOnlinePlayers()) options.add(player.getName());

@@ -231,10 +231,6 @@ public class FactoryTicker implements Runnable {
     }
 
     private double getSellPrice(String product) {
-        if ("coal".equals(product)) return config.getMachineSellPrice() * 1.5D;
-        if ("iron_ore".equals(product)) return config.getMachineSellPrice() * 2.5D;
-        if ("iron_ingot".equals(product)) return config.getMachineSellPrice() * 3.0D;
-        if ("factory_product".equals(product)) return config.getMachineSellPrice() * 6.0D;
-        return config.getMachineSellPrice();
+        return config.getProductSellPrice(product);
     }
 }

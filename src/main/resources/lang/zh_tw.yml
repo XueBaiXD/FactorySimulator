@@ -16,7 +16,7 @@ help:
     - '&e/{label} reload &7- 重載設定（管理員）'
 version-info: |-
   &6FactorySimulator &7- &f工廠模擬器
-  &7Version: &f1.0.2
+  &7Version: &f1.1.0
   &7Author: &fXueBaiXD
   &7GitHub: &fXueBaiXD
   &7QQ: &f3987575641 &7/ &f2932226971

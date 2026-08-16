@@ -74,6 +74,8 @@ workers:
   max-count: 32
   # 基础工人效率
   base-efficiency: 1.0
+  hire-cost: 500
+  fire-refund-rate: 0.25
 
 achievements:
   # 是否启用成就系统
@@ -104,3 +106,5 @@ machines:
   drop-on-break: true
   # Hidden lore marker used by the 1.12.2-compatible item registry
   item-marker: '§0FS_MACHINE:'
+  max-level: 10
+  upgrade-base-cost: 1000

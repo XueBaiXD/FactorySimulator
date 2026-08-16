@@ -30,7 +30,8 @@ public class FactoryBlockListener implements Listener {
         if (type == null) return;
         Player player = event.getPlayer();
         FactoryProfile profile = service.getOrCreate(player);
-        if (!profile.getWorldName().equals(event.getBlock().getWorld().getName())) {
+        if (!profile.isCreated() || profile.getWorldName() == null
+                || !profile.getWorldName().equals(event.getBlock().getWorld().getName())) {
             event.setCancelled(true);
             return;
         }

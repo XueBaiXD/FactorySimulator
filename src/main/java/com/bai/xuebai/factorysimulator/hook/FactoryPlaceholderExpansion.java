@@ -55,20 +55,18 @@ public class FactoryPlaceholderExpansion extends PlaceholderExpansion {
             case "created":
                 return String.valueOf(profile.isCreated());
             case "rank_money":
-                return String.valueOf(rank(profile, true));
+                return String.valueOf(plugin.getFactoryService().getRank(profile, false));
             case "rank_level":
-                return String.valueOf(rank(profile, false));
+                return String.valueOf(plugin.getFactoryService().getRank(profile, true));
+            case "rank":
+                return String.valueOf(plugin.getFactoryService().getRank(profile, false));
+            case "achievements":
+            case "achievement_count":
+                return String.valueOf(profile.getAchievements().size());
+            case "offline_money":
+                return String.format(java.util.Locale.ROOT, "%.2f", profile.getOfflineStoredMoney());
         }
         return null;
     }
 
-    private int rank(FactoryProfile target, boolean money) {
-        int rank = 1;
-        for (FactoryProfile profile : plugin.getStorage().getAll()) {
-            if (profile == target) continue;
-            if ((money && profile.getMoney() > target.getMoney()) || (!money && profile.getLevel() > target.getLevel()))
-                rank++;
-        }
-        return rank;
-    }
 }

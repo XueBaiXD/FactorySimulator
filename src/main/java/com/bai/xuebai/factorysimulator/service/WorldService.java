@@ -144,6 +144,7 @@ public class WorldService {
             }
         }
         world.getBlockAt(0, 65, 0).setType(config.getWorldCenterMaterial());
+        buildBoundary(world, plotSize);
     }
 
     private void configureWorld(World world) {
@@ -161,6 +162,20 @@ public class WorldService {
                 if (world.getBlockAt(x, 64, z).getType() == Material.AIR) {
                     world.getBlockAt(x, 64, z).setType(config.getWorldPlatformMaterial());
                 }
+            }
+        }
+        buildBoundary(world, plotSize);
+    }
+
+    private void buildBoundary(World world, int plotSize) {
+        int half = plotSize / 2 + 1;
+        int height = Math.min(world.getMaxHeight() - 1, config.getBorderHeight());
+        for (int y = 64; y <= height; y++) {
+            for (int coordinate = -half; coordinate <= half; coordinate++) {
+                world.getBlockAt(-half, y, coordinate).setType(config.getWorldBorderMaterial());
+                world.getBlockAt(half, y, coordinate).setType(config.getWorldBorderMaterial());
+                world.getBlockAt(coordinate, y, -half).setType(config.getWorldBorderMaterial());
+                world.getBlockAt(coordinate, y, half).setType(config.getWorldBorderMaterial());
             }
         }
     }

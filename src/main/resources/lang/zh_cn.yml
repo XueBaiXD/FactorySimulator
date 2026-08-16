@@ -9,14 +9,17 @@ help:
     - '&e/{label} menu &7- 查看教程提示'
     - '&e/{label} rename <名称> &7- 修改工厂名称'
     - '&e/{label} upgrade &7- 升级工厂地皮'
+    - '&e/{label} workers <info|hire|fire> &7- 管理工人'
+    - '&e/{label} machine upgrade &7- 升级准星指向的设备'
     - '&e/{label} buy <设备ID> [数量] &7- 购买设备'
+    - '&e/{label} top [level] &7- 查看排行榜'
     - '&e/{label} info [玩家] &7- 查看工厂信息'
     - '&e/{label} status &7- 查看服务器状态'
     - '&e/{label} machine give <玩家> <设备ID> [数量] &7- 发放设备（管理员）'
     - '&e/{label} reload &7- 重载配置（管理员）'
 version-info: |-
   &6FactorySimulator &7- &f工厂模拟器
-  &7Version: &f1.0.2
+  &7Version: &f1.1.0
   &7Author: &fXueBaiXD
   &7GitHub: &fXueBaiXD
   &7QQ: &f3987575641 &7/ &f2932226971
@@ -29,3 +32,14 @@ info-player: '{prefix} &a工厂信息 &7| &f名称: {name} &7| &fID: {id} &7| &f
 machine-not-found: '{prefix} &c未知设备类型：&f{type}'
 machine-given: '{prefix} &a已发放设备 &f{type} &ax{amount}'
 purchase-amount: '{prefix} &e请输入要购买的数量 &7(1-2304)，输入 cancel 取消。'
+workers-info: '{prefix} &a工人：&f{workers}/{max} &7| &a雇佣费用：&e{hire}'
+worker-hired: '{prefix} &a成功雇佣一名工人。'
+worker-hire-failed: '{prefix} &c无法雇佣工人，可能是资金不足或已达到上限。'
+worker-fired: '{prefix} &e已解雇一名工人并返还部分费用。'
+worker-fire-failed: '{prefix} &c当前没有可解雇的工人。'
+machine-upgrade-target: '{prefix} &c请将准星指向自己工厂中的设备。'
+machine-upgraded: '{prefix} &a设备升级成功，当前等级：&f{level}'
+machine-upgrade-failed: '{prefix} &c设备升级失败，可能已达上限或资金不足（需要 {cost}）。'
+leaderboard-header: '{prefix} &6工厂排行榜（{type}）'
+leaderboard-line: '&e#{rank} &f{player} &7- &a{value}'
+leaderboard-disabled: '{prefix} &c排行榜功能已关闭。'

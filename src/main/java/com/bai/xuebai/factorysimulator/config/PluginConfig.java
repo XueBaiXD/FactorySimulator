@@ -161,6 +161,27 @@ public class PluginConfig {
         return factoryConfig.getDouble("workers.base-efficiency", 1.0D);
     }
 
+    public double getWorkerHireCost() {
+        return factoryConfig.getDouble("workers.hire-cost", 500D);
+    }
+
+    public double getWorkerFireRefundRate() {
+        return factoryConfig.getDouble("workers.fire-refund-rate", 0.25D);
+    }
+
+    public double getMachineUpgradeBaseCost() {
+        return factoryConfig.getDouble("machines.upgrade-base-cost", 1000D);
+    }
+
+    public double getMachineUpgradeCost(String type, int level) {
+        double multiplier = factoryConfig.getDouble("shop.items." + type + ".upgrade-cost-multiplier", 1.5D);
+        return getMachineUpgradeBaseCost() * Math.max(1, level) * Math.max(1D, multiplier);
+    }
+
+    public int getMaximumMachineLevel() {
+        return Math.max(1, factoryConfig.getInt("machines.max-level", 10));
+    }
+
     public boolean isAchievementEnabled() {
         return factoryConfig.getBoolean("achievements.enabled", true);
     }

@@ -2,7 +2,7 @@
 
 FactorySimulator 是一个轻量 RPG 工厂经营插件。玩家可以创建自己的工厂世界，摆放并连接生产设备，出售产物赚取资金，升级工厂地皮与设备，逐步建设自动化生产线。
 
-> 当前版本：`1.0.2`
+> 当前版本：`1.1.0`
 
 > 作者：`XueBaiXD`
 
@@ -41,6 +41,10 @@ https://modrinth.com/plugin/factorysimulator
 - **多种存储**：支持 YAML、SQLite 和 MySQL 三种存储方式。
 - **批量商店购买**：点击设备商店中的设备后，可在聊天框输入购买数量，一次购买多个设备。
 - **管理员发放**：管理员可以指定在线玩家和发放数量，批量发放设备。
+- **工人经营**：支持雇佣、解雇工人，并配置工人上限、雇佣费用和解雇返还比例。
+- **设备成长**：可以升级准星指向的自有设备，设备等级、升级费用和最大等级均可配置。
+- **成就系统**：自动记录设备、资金、工人、地皮和工厂等级等成长成就。
+- **排行榜**：支持按资金和工厂等级查看排行榜，并可通过 PlaceholderAPI 或全息插件展示。
 - **软依赖设计**：PlaceholderAPI、Vault、HolographicDisplays、Multiverse-Core 均为软依赖，不安装时插件仍可启动核心功能。
 - **中文/繁中/英文语言**：通过 `messages.yml` 选择 `zh_cn`、`zh_tw` 或 `en` 语言文件。
 
@@ -57,9 +61,9 @@ https://modrinth.com/plugin/factorysimulator
 | 插件 | 用途 | 是否必需 |
 | --- | --- | --- |
 | PlaceholderAPI | 提供工厂变量，供记分板、TAB、聊天、全息等插件调用 | 否 |
-| Vault | 经济生态兼容入口及状态识别 | 是 |
+| Vault | 经济生态兼容入口及状态识别 | 否 |
 | HolographicDisplays | 全息展示生态兼容入口及状态识别 | 否 |
-| Multiverse-Core | 多世界生态兼容入口及状态识别 | 是 |
+| Multiverse-Core | 多世界生态兼容入口及状态识别 | 否 |
 
 插件已经在 `plugin.yml` 中将上述插件声明为 `softdepend`。缺少任意一个插件不会阻止 FactorySimulator 启动。
 
@@ -105,7 +109,13 @@ https://modrinth.com/plugin/factorysimulator
 | `/fs menu` | 查看教程菜单提示；教程内容通过教程书打开 |
 | `/fs rename <工厂名称>` | 修改自己的工厂名称 |
 | `/fs upgrade` | 升级工厂地皮 |
+| `/fs workers info` | 查看工人数量、上限和雇佣费用 |
+| `/fs workers hire` | 雇佣一名工人 |
+| `/fs workers fire` | 解雇一名工人并返还部分费用 |
+| `/fs machine upgrade` | 升级准星指向的自有设备 |
 | `/fs buy <设备ID> [数量]` | 购买指定数量的设备并放入背包；数量范围为 `1-2304` |
+| `/fs top` | 查看资金排行榜 |
+| `/fs top level` | 查看工厂等级排行榜 |
 | `/fs info` | 查看自己的工厂信息 |
 | `/fs info <玩家名或UUID>` | 查看指定玩家的工厂信息 |
 | `/fs info server` | 查看服务器状态 |
@@ -220,6 +230,10 @@ factorysimulator
 | `%factorysimulator_created%` | 是否已创建工厂，返回 `true` 或 `false` |
 | `%factorysimulator_rank_money%` | 按资金排序的当前玩家名次 |
 | `%factorysimulator_rank_level%` | 按工厂等级排序的当前玩家名次 |
+| `%factorysimulator_rank%` | `rank_money` 的别名，按资金排序的当前玩家名次 |
+| `%factorysimulator_achievements%` | 当前玩家已获得的成就数量 |
+| `%factorysimulator_achievement_count%` | `achievements` 的别名 |
+| `%factorysimulator_offline_money%` | 当前记录的离线收益金额 |
 
 ### 使用示例
 
